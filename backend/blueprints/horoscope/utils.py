@@ -127,6 +127,33 @@ bavam_karma_mapping = {
     1: "Jupiter"
 }
 
+planet_karma_mapping = {
+    "Sun": "Jupiter",
+    "Moon": "Jupiter",
+    "Mars": "Jupiter",
+    "Ketu": "Sun",
+    "Mercury": "Saturn",
+    "Jupiter": "Rahu",
+    "Venus": "Moon",
+    "Rahu": "Moon",
+    "Saturn": "Mars",
+}
+
+house_karma_lords = {
+    1: "Jupiter",
+    2: "Jupiter",
+    3: None,
+    4: None,
+    5: "Jupiter",
+    6: "Saturn",
+    7: "Moon",
+    8: None,
+    9: "Rahu",
+    10: None,
+    11: "Mars",
+    12: "Sun"
+}
+
 def get_star_position(degree):
     if degree > 0 and degree < 03.2: return 1
     if degree > 3.2 and degree < 6.4: return 2
@@ -171,7 +198,11 @@ def get_house_lord_star_karma(house_lord, planet_list):
         if current_planet["name"] == house_lord: 
             current_star = current_planet["star"]
             for karma in karmas:
-                if current_star in karma_star_mapping[karma]: return {"name": karma, "reason": f'House lord ({house_lord}) is in {current_star}'}
+                if current_star in karma_star_mapping[karma]: return {
+                    "name": karma, 
+                    "reason": f'House lord ({house_lord}) is in {current_star}',
+                    "level": "very_strong"
+                }
 
 def get_house_lord_saram_karma(house_lord, planet_list, users_first_house):
     for current_planet in planet_list:
@@ -184,20 +215,123 @@ def get_house_lord_saram_karma(house_lord, planet_list, users_first_house):
                 user_house_count = get_planets_current_house(houses_no, users_first_house)
                 bavan_house_list.append(user_house_count)
             for house_no in bavan_house_list: 
-                if house_no == 6: karma_list.append({"name": "Moon", "reason": f'{house_lord} is on the saram of {house_no} lord'})
-                if bavam_karma_mapping[house_no]: karma_list.append({"name": bavam_karma_mapping[house_no], "reason": f'{house_lord} is on the saram of {house_no} lord'})
+                if house_no == 6: karma_list.append({
+                    "name": "Moon", 
+                    "reason": f'{house_lord} is on the saram of {house_no} lord',
+                    "level": "strong"
+                    })
+                if bavam_karma_mapping[house_no]: karma_list.append({
+                    "name": bavam_karma_mapping[house_no], 
+                    "reason": f'{house_lord} is on the saram of {house_no} lord',
+                    "level": "strong"
+                    })
             return karma_list
 
 def get_house_lord_bavam_karma(house_lord, planet_list, users_first_house):
     for current_planet in planet_list:
         if current_planet["name"] == house_lord:
             planets_current_sign = current_planet["current_sign"]
-            print("current_planet", current_planet)
             planets_position = get_planets_current_house(planets_current_sign, users_first_house)
-            print("planets_position", planets_position)
             karma_list =[]
-            if planets_position == 6: karma_list.append({"name": "Moon", "reason": f'{house_lord} is currently in {planets_position}'})
-            if bavam_karma_mapping[planets_position]: karma_list.append({"name": bavam_karma_mapping[planets_position], "reason": f'{house_lord} is currently in {planets_position} house'})
+            if planets_position == 6: karma_list.append({
+                    "name": "Moon", 
+                    "reason": f'{house_lord} is currently in {planets_position}',
+                    "level": "strong"
+                })
+            if bavam_karma_mapping[planets_position]: karma_list.append({
+                "name": bavam_karma_mapping[planets_position], 
+                "reason": f'{house_lord} is currently in {planets_position} house',
+                "level": "strong"
+                })
             return karma_list
+
+def get_planets_karma(_, planet_list, users_first_house, user_requested_house):
+    karma_list = []
+    for planet in planet_list:
+        planets_position = get_planets_current_house(planet["current_sign"], users_first_house)
+        if user_requested_house == planets_position:
+            planet_name = planet["name"]
+            if planet_name != "Ascendant": karma_list.append({
+                "name": planet_karma_mapping[planet_name], 
+                "reason": f'{planet_name} is in this {user_requested_house} house',
+                "level": "low"
+            })
+    return karma_list
+
+def get_planets_houses_karma(_, planet_list, users_first_house, user_requested_house):
+    karma_list = []
+    for planet in planet_list:
+        planets_position = get_planets_current_house(planet["current_sign"], users_first_house)
+        if user_requested_house == planets_position:
+            planet_name = planet["name"]
+            if planet_name != "Ascendant":
+                owning_houses = planet_owning_house[planet_name]
+                bavan_house_list = []
+                for houses_no in owning_houses:
+                    user_house_count = get_planets_current_house(houses_no, users_first_house)
+                    bavan_house_list.append(user_house_count)
+                for house_no in bavan_house_list: 
+                    if house_no == 6: karma_list.append(
+                        {
+                            "name": "Moon", 
+                            "reason": f'{user_requested_house} house has the {planet_name} whose is the owner of {house_no}', 
+                            "level": "medium"
+                        })
+                    if bavam_karma_mapping[house_no]: karma_list.append(
+                        {
+                            "name": bavam_karma_mapping[house_no], 
+                            "reason": f'{user_requested_house} house has the {planet_name} whose is the owner of {house_no}',
+                            "level": "medium"
+                        })
+    return karma_list
+
+def get_house_lord_conjuction_karma(house_lord ,planet_list, users_first_house):
+    house_lord_no = None
+    for current_planet in planet_list:
+        if current_planet["name"] == house_lord: house_lord_no = get_planets_current_house(current_planet["current_sign"], users_first_house)
+    karma_list = []
+    for planet in planet_list:
+        planets_position = get_planets_current_house(planet["current_sign"], users_first_house)
+        if house_lord_no == planets_position:
+            planet_name = planet["name"]
+            if planet_name != "Ascendant" and planet_name != house_lord:
+                owning_houses = planet_owning_house[planet_name]
+                bavan_house_list = []
+                for houses_no in owning_houses:
+                    user_house_count = get_planets_current_house(houses_no, users_first_house)
+                    bavan_house_list.append(user_house_count)
+                for house_no in bavan_house_list: 
+                    if house_no == 6: karma_list.append(
+                        {
+                            "name": "Moon", 
+                            "reason": f'house lord is with {planet_name} whose is the owner of {house_no}',
+                            "level": "medium"
+                        })
+                    if bavam_karma_mapping[house_no]: karma_list.append(
+                        {
+                            "name": bavam_karma_mapping[house_no], 
+                            "reason": f'house lord is with {planet_name} whose is the owner of {house_no}',
+                            "level": "medium"
+                        })
+    return karma_list
+    
+def get_user_house_karma(user_first_house, house_count):
+    if user_first_house + house_count >= 14: required_house_count =(user_first_house + house_count) - 13
+    else: required_house_count = (user_first_house + house_count)-1
+    karma_list = []
+    if (house_karma_lords[required_house_count]):
+        karma_list.append({
+            "name": house_karma_lords[required_house_count],
+            "reason": f"your current house is {required_house_count} from Aries",
+            "level": "medium"
+        })
+    if (required_house_count == 6):
+        karma_list.append({
+            "name": "Moon",
+            "reason": f"your current house is {required_house_count} from Aries",
+            "level": "medium"
+        })
+    return karma_list
+
 
 
