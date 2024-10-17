@@ -8,6 +8,7 @@ planets = ["Ascendant",
            "Rahu",
            "Mars", 
            "Mercury"]
+karmas = ["Sun", "Moon", "Mars", "Saturn", "Venus", "Mercury", "Rahu", "Jupiter"]
 
 house_star_mapping= {
     1: ["Ashwini", "Bharani", "Krittika"],
@@ -43,6 +44,31 @@ second_type = [2, 6, 10]
 third_type= [3, 7, 11]
 fourth_type = [4, 8, 12]
 
+house_name_lords = {
+    "Mesham": "Mars",
+    "Rishabam": "Venus",
+    "Midunam": "Mercury",
+    "Kadagam": "Moon",
+    "Simmum": "Sun",
+    "Kanni": "Mercury",
+    "Thulam": "Venus",
+    "Viruchigam": "Mars",
+    "Dhanusu": "Jupiter",
+    "Magaram": "Saturn",
+    "Kumbam": "Saturn",
+    "Meenam": "Jupiter"
+}
+
+karma_star_mapping = {
+    "Sun": ["Ashwini", "Ayilyam", "Anusam", "Poorattaathi"],
+    "Moon": ["Bharani", "Maham", "Kettai", "Uthirattaathi"],
+    "Mars": ["Krittika", "Pooram", "Moolam", "Revathi"],
+    "Jupiter": ["Mrigashirsa", "Astham", "Uthiradam"],
+    "Saturn":["PunarPoosam", "Suvathi", "Avittam"],
+    "Mercury": ["Rohini", "Uthiram", "Pooradam"],
+    "Venus": ["Thiruvonam", "Thiruvathirai", "Chitirai"],
+    "Rahu": ["Sathayam", "Poosam", "Visakam"],
+}
 def get_star_position(degree):
     if degree > 0 and degree < 03.2: return 1
     if degree > 3.2 and degree < 6.4: return 2
@@ -72,4 +98,15 @@ def find_star(house_count, degree):
         if star_count <= 1: return house_star_mapping.get(house_count)[0]
         if star_count > 1 and star_count <= 5: return house_star_mapping[house_count][1]
         else: return house_star_mapping.get(house_count)[2]
+
+def get_first_house(planet_list):  
+    for current_planet in planet_list:
+        if current_planet["name"] == "Ascendant": return current_planet["current_sign"]
+
+def get_house_lord_star_karma(house_lord, planet_list):
+    for current_planet in planet_list:
+        if current_planet["name"] == house_lord: 
+            current_star = current_planet["star"]
+            for karma in karmas:
+                if current_star in karma_star_mapping[karma]: return karma 
 
