@@ -1,5 +1,5 @@
 from others.astrology import AstrologyService
-from .utils import planets, find_star, house_name, get_first_house, get_house_lord_star_karma, house_name_lords
+from .utils import planets, find_star, house_name, get_first_house, get_house_lord_star_karma, house_name_lords, get_house_lord_saram_karma, get_house_lord_bavam_karma
 
 
 def format_stars_planet(planet_position):
@@ -20,6 +20,8 @@ def get_house_karma(planet_list, house_count):
     else: required_house_name = house_name[(user_first_house + house_count)-1]
     house_lord = house_name_lords[required_house_name]
     karma_list.append(get_house_lord_star_karma(house_lord, planet_list))
+    karma_list = karma_list + get_house_lord_saram_karma(house_lord, planet_list, user_first_house)
+    karma_list = karma_list + get_house_lord_bavam_karma(house_lord, planet_list, user_first_house)
     return karma_list
 
 def generate_horoscope_from_api(birth_details, house_number):
@@ -30,5 +32,5 @@ def generate_horoscope_from_api(birth_details, house_number):
         updated_json = format_stars_planet(required_list[1])
         karma_list = get_house_karma(updated_json, house_number)
         print("karma list", karma_list)
-    return updated_json
+    return {"planet_position" : updated_json, "karma_list": karma_list}
     
