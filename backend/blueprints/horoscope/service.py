@@ -24,17 +24,20 @@ def get_house_karma(planet_list, house_count):
     karma_list = karma_list + get_house_lord_bavam_karma(house_lord, planet_list, user_first_house)
     karma_list = karma_list + get_planets_houses_karma(house_lord, planet_list, user_first_house, house_count)
     karma_list = karma_list + get_house_lord_conjuction_karma(house_lord, planet_list, user_first_house)
-    karma_list =  karma_list + get_user_house_karma(user_first_house, house_count)
+    karma_list = karma_list + get_user_house_karma(user_first_house, house_count)
     karma_list = karma_list + get_planets_karma(house_lord, planet_list, user_first_house, house_count)
     return karma_list
 
-def generate_horoscope_from_api(birth_details, house_number):
+def generate_horoscope_from_api(birth_details):
     astrology_data = AstrologyService()
     response_generated = astrology_data.generate_horoscope(birth_details)
+    chart_generated = astrology_data.generate_horoscope_chart(birth_details)
     if response_generated:
         required_list = response_generated.get("output")
-        updated_json = format_stars_planet(required_list[1])
-        karma_list = get_house_karma(updated_json, house_number)
-        print("karma list", karma_list)
-    return {"planet_position" : updated_json, "karma_list": karma_list}
+        updated_planet_list = format_stars_planet(required_list[1])
+        karma_list = []
+        for i in range(1,13): 
+            house_karma_list = get_house_karma(updated_planet_list, i)
+            karma_list.append({ i: house_karma_list })
+    return {"planet_position" : updated_planet_list, "karma_list": karma_list, "chart": chart_generated["output"]}
     
