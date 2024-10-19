@@ -18,7 +18,8 @@ export const KarmaTabs = ({ karma_list }) => {
         if ("very_strong" == level) return "#72BF78"
         if ("strong" == level) return "#A0D683"
         if ("medium" == level) return "#D3EE98"
-        else return "#FEFF9F"
+        if ("low" == level) return "#FEFF9F"
+        else return "#F5F4B3"
     }
 
     return (
@@ -39,7 +40,7 @@ export const KarmaTabs = ({ karma_list }) => {
                             const { level, name, reason } = current_planet
                             return (
                                 <TabPanel value={index + 1} style={{ backgroundColor: getColorCode(level) }}>
-                                    <span >{name} Karma </span> == <span>{reason}</span>
+                                    <span >{name} Karma : </span> <span>{reason}</span>
                                 </TabPanel>
                             )
                         })

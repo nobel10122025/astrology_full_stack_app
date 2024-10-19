@@ -154,3 +154,5 @@ house_karma_lords = {
     11: "Mars",
     12: "Sun"
 }
+
+aspecting_houses = [2,3,4,6,7,8,9]

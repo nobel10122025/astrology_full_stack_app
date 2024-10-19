@@ -1,4 +1,4 @@
-from .constants import first_type, second_type, third_type, fourth_type, house_star_mapping, karmas, karma_star_mapping, star_owner_mapping, planet_owning_house, planet_karma_mapping, bavam_karma_mapping, house_karma_lords
+from .constants import first_type, second_type, third_type, fourth_type, house_star_mapping, karmas, karma_star_mapping, star_owner_mapping, planet_owning_house, planet_karma_mapping, bavam_karma_mapping, house_karma_lords, aspecting_houses
 
 def get_star_position(degree):
     if degree > 0 and degree < 03.2: return 1
@@ -38,6 +38,14 @@ def get_planets_current_house(planets_current_sign, users_first_house):
     if (planets_current_sign - users_first_house) == 0:  return 1
     elif (planets_current_sign - users_first_house) > 0: return (planets_current_sign - users_first_house + 1)
     else: return (13 - abs(planets_current_sign - users_first_house))
+
+def get_aspecting_houses(planets_current_sign):
+    house_list = []
+    for house_no in  aspecting_houses:
+        if planets_current_sign - house_no == 0: house_list.append(12)
+        elif planets_current_sign - house_no > 0: house_list.append(planets_current_sign - house_no)
+        else: house_list.append(12-abs(planets_current_sign - house_no)) 
+    return house_list
 
 def get_house_lord_star_karma(house_lord, planet_list):
     for current_planet in planet_list:
@@ -179,5 +187,42 @@ def get_user_house_karma(user_first_house, house_count):
         })
     return karma_list
 
-
-
+def get_aspecting_planet_karma(_, planet_list, users_first_house, user_requested_house):
+    karma_list = []
+    aspecting_houses = get_aspecting_houses(user_requested_house)
+    for planet in planet_list:
+        if planet["name"] != "Ascendant":
+            planets_position = get_planets_current_house(planet["current_sign"], users_first_house)
+            if ((aspecting_houses[0] == planets_position or aspecting_houses[6] == planets_position) and planet["name"] == "Saturn"):
+                house_no = aspecting_houses[0] if aspecting_houses[0] == planets_position else aspecting_houses[6]
+                if bavam_karma_mapping[house_no]: karma_list.append(
+                    {
+                        "name": bavam_karma_mapping[house_no], 
+                        "reason": f'{planet["name"]} which is in the {planets_position} is aspecting {user_requested_house}',
+                        "level": "very_low"
+                    })
+            elif ((aspecting_houses[1] == planets_position or aspecting_houses[4] == planets_position) and planet["name"] == "Mars"):
+                house_no = aspecting_houses[1] if aspecting_houses[1] == planets_position else aspecting_houses[4]
+                if bavam_karma_mapping[house_no]: karma_list.append(
+                    {
+                        "name": bavam_karma_mapping[house_no], 
+                        "reason": f'{planet["name"]} which is in the {planets_position} is aspecting {user_requested_house}',
+                        "level": "very_low"
+                    })
+            elif ((aspecting_houses[2] == planets_position or aspecting_houses[5] == planets_position) and planet["name"] == "Jupiter"):
+                house_no = aspecting_houses[2] if aspecting_houses[2] == planets_position else aspecting_houses[5]
+                if bavam_karma_mapping[house_no]: karma_list.append(
+                    {
+                        "name": bavam_karma_mapping[house_no], 
+                        "reason": f'{planet["name"]} which is in the {planets_position} is aspecting {user_requested_house}',
+                        "level": "very_low"
+                    })
+            if aspecting_houses[3] == planets_position:
+                house_no = aspecting_houses[3]
+                if bavam_karma_mapping[house_no]: karma_list.append(
+                    {
+                        "name": bavam_karma_mapping[house_no], 
+                        "reason": f'{planet["name"]} which is in the {planets_position} is aspecting {user_requested_house}',
+                        "level": "very_low"
+                    })
+    return karma_list
