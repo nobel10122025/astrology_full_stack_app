@@ -89,12 +89,12 @@ def get_house_lord_bavam_karma(house_lord, planet_list, users_first_house):
             karma_list =[]
             if planets_position == 6: karma_list.append({
                     "name": "Moon", 
-                    "reason": f'{house_lord} is currently in {planets_position}',
+                    "reason": f'{house_lord} (house lord) is currently in {planets_position}',
                     "level": "strong"
                 })
             if bavam_karma_mapping[planets_position]: karma_list.append({
                 "name": bavam_karma_mapping[planets_position], 
-                "reason": f'{house_lord} is currently in {planets_position} house',
+                "reason": f'{house_lord} (house lord) is currently in {planets_position} house',
                 "level": "strong"
                 })
             return karma_list
@@ -108,7 +108,7 @@ def get_planets_karma(_, planet_list, users_first_house, user_requested_house):
             if planet_name != "Ascendant": karma_list.append({
                 "name": planet_karma_mapping[planet_name], 
                 "reason": f'{planet_name} is in this {user_requested_house} house',
-                "level": "low"
+                "level": "very_low"
             })
     return karma_list
 
@@ -167,6 +167,12 @@ def get_house_lord_conjuction_karma(house_lord ,planet_list, users_first_house):
                             "reason": f'house lord is with {planet_name} whose is the owner of {house_no}',
                             "level": "medium"
                         })
+            if(planet_name == "Rahu" or planet_name == "Ketu"): karma_list.append(
+                {
+                    "name": "Moon" if planet_name == "Rahu" else "Sun", 
+                    "reason": f'house lord is with {planet_name}',
+                    "level": "medium"
+                })
     return karma_list
     
 def get_user_house_karma(user_first_house, house_count):
@@ -194,35 +200,39 @@ def get_aspecting_planet_karma(_, planet_list, users_first_house, user_requested
         if planet["name"] != "Ascendant":
             planets_position = get_planets_current_house(planet["current_sign"], users_first_house)
             if ((aspecting_houses[0] == planets_position or aspecting_houses[6] == planets_position) and planet["name"] == "Saturn"):
-                house_no = aspecting_houses[0] if aspecting_houses[0] == planets_position else aspecting_houses[6]
-                if bavam_karma_mapping[house_no]: karma_list.append(
-                    {
-                        "name": bavam_karma_mapping[house_no], 
-                        "reason": f'{planet["name"]} which is in the {planets_position} is aspecting {user_requested_house}',
-                        "level": "very_low"
-                    })
+                get_planets_owning_house(planet["name"], users_first_house, karma_list, planets_position, user_requested_house)
             elif ((aspecting_houses[1] == planets_position or aspecting_houses[4] == planets_position) and planet["name"] == "Mars"):
-                house_no = aspecting_houses[1] if aspecting_houses[1] == planets_position else aspecting_houses[4]
-                if bavam_karma_mapping[house_no]: karma_list.append(
-                    {
-                        "name": bavam_karma_mapping[house_no], 
-                        "reason": f'{planet["name"]} which is in the {planets_position} is aspecting {user_requested_house}',
-                        "level": "very_low"
-                    })
+                get_planets_owning_house(planet["name"], users_first_house, karma_list, planets_position, user_requested_house)
             elif ((aspecting_houses[2] == planets_position or aspecting_houses[5] == planets_position) and planet["name"] == "Jupiter"):
-                house_no = aspecting_houses[2] if aspecting_houses[2] == planets_position else aspecting_houses[5]
-                if bavam_karma_mapping[house_no]: karma_list.append(
-                    {
-                        "name": bavam_karma_mapping[house_no], 
-                        "reason": f'{planet["name"]} which is in the {planets_position} is aspecting {user_requested_house}',
-                        "level": "very_low"
-                    })
+                get_planets_owning_house(planet["name"], users_first_house, karma_list, planets_position, user_requested_house)
             if aspecting_houses[3] == planets_position:
-                house_no = aspecting_houses[3]
-                if bavam_karma_mapping[house_no]: karma_list.append(
-                    {
-                        "name": bavam_karma_mapping[house_no], 
-                        "reason": f'{planet["name"]} which is in the {planets_position} is aspecting {user_requested_house}',
-                        "level": "very_low"
-                    })
+                get_planets_owning_house(planet["name"], users_first_house, karma_list, planets_position, user_requested_house)
+    return karma_list
+
+def get_planets_owning_house(planet_name, users_first_house, karma_list, planets_position, user_requested_house):
+    if(planet_name == "Rahu" or planet_name == "Ketu"): karma_list.append(
+        {
+            "name": "Moon" if planet_name == "Rahu" else "Sun", 
+            "reason": f'{planet_name} is aspecting from {planets_position} house',
+            "level": "low"
+        })
+    else :
+        owning_houses = planet_owning_house[planet_name]
+        bavan_house_list = []
+        for houses_no in owning_houses:
+            user_house_count = get_planets_current_house(houses_no, users_first_house)
+            bavan_house_list.append(user_house_count)
+        for current_house in bavan_house_list:
+            if (current_house == 6): karma_list.append(
+                {
+                    "name": "Moon", 
+                    "reason": f'{planet_name} which is in the {planets_position} is the lord of {current_house} is aspecting {user_requested_house}',
+                    "level": "low"
+                })
+            if bavam_karma_mapping[current_house]: karma_list.append(
+            {
+                "name": bavam_karma_mapping[current_house], 
+                "reason": f'{planet_name} which is in the {planets_position} is the lord of {current_house} is aspecting {user_requested_house}',
+                "level": "low"
+            })
     return karma_list

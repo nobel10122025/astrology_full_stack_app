@@ -26,8 +26,8 @@ def get_house_karma(planet_list, house_count):
     karma_list = karma_list + get_planets_houses_karma(house_lord, planet_list, user_first_house, house_count)
     karma_list = karma_list + get_house_lord_conjuction_karma(house_lord, planet_list, user_first_house)
     karma_list = karma_list + get_user_house_karma(user_first_house, house_count)
-    karma_list = karma_list + get_planets_karma(house_lord, planet_list, user_first_house, house_count)
     karma_list = karma_list + get_aspecting_planet_karma(house_lord, planet_list, user_first_house, house_count)
+    karma_list = karma_list + get_planets_karma(house_lord, planet_list, user_first_house, house_count)
     return karma_list
 
 def generate_horoscope_from_api(birth_details):
