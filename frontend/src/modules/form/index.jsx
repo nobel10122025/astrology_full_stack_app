@@ -6,7 +6,9 @@ import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Typography from '@mui/material/Typography';
 import { TextField, Box, Button } from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
 import Snackbar from '@mui/material/Snackbar';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { useStyles } from './style';
 import { generate_horoscope } from '../apis/apis';
@@ -20,9 +22,8 @@ function FormPage() {
   const [userValues, setUserValues] = useState({ date: '', long: '', lat: '', time: '', user_name: '' })
   const [loading, setLoading] = useState(false)
   const [toasterOpen, setToasterOpen] = useState(false)
+  const [generateChart, setGenerateChart] = useState(false)
   const classes = useStyles()
-  console.log("userValues", userValues)
-  console.log("data data", data)
 
   const handleClose = () => {
     setToasterOpen(false);
@@ -30,10 +31,10 @@ function FormPage() {
 
   const generateHoroscope = () => {
     const formattedPayload = createPayload(userValues)
-    const chart_constants = chart_color_constants
-    chart_constants["chart_config"]["native_name"] = userValues["user_name"]
+    const chart_constants = generateChart ? chart_color_constants : {}
+    if (chart_constants && Object.keys(chart_constants).length > 0) chart_constants["chart_config"]["native_name"] = userValues["user_name"]
     setLoading(true)
-    generate_horoscope({ ...formattedPayload, ...payload_constants, ...chart_constants }).then((res) => res.json()).then((data) => {
+    generate_horoscope({ ...formattedPayload, ...payload_constants, ...chart_constants, generate_chart: generateChart }).then((res) => res.json()).then((data) => {
       setData(data)
       setLoading(false)
     }).catch((err) => {
@@ -77,7 +78,7 @@ function FormPage() {
               />
             </LocalizationProvider>
           </Box>
-          <Box className={classes.fieldHolder} >
+          <Box className={classes.fieldHolder}>
             <Typography className={classes.title}>Lantitude</Typography>
             <TextField
               id="outlined-number"
@@ -105,6 +106,13 @@ function FormPage() {
               onChange={(event) => setUserValues({ ...userValues, long: event.target.value })}
             />
           </Box>
+          <FormControlLabel control={
+            <Checkbox
+              color="secondary"
+              onChange={(event) => setGenerateChart(event.target.checked)}
+            />}
+            label="Generate Chart"
+          />
           <Box className={classes.btnContainer}>
             <Button
               variant='contained'

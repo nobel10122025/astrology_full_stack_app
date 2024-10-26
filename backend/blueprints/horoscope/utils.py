@@ -108,7 +108,7 @@ def get_planets_karma(_, planet_list, users_first_house, user_requested_house):
             if planet_name != "Ascendant": karma_list.append({
                 "name": planet_karma_mapping[planet_name], 
                 "reason": f'{planet_name} is in this {user_requested_house} house',
-                "level": "very_low"
+                "level": "negligible"
             })
     return karma_list
 
@@ -141,8 +141,11 @@ def get_planets_houses_karma(_, planet_list, users_first_house, user_requested_h
 
 def get_house_lord_conjuction_karma(house_lord ,planet_list, users_first_house):
     house_lord_no = None
+    house_lord_degree = None
     for current_planet in planet_list:
-        if current_planet["name"] == house_lord: house_lord_no = get_planets_current_house(current_planet["current_sign"], users_first_house)
+        if current_planet["name"] == house_lord: 
+            house_lord_no = get_planets_current_house(current_planet["current_sign"], users_first_house)
+            house_lord_degree = current_planet["normDegree"]
     karma_list = []
     for planet in planet_list:
         planets_position = get_planets_current_house(planet["current_sign"], users_first_house)
@@ -159,19 +162,22 @@ def get_house_lord_conjuction_karma(house_lord ,planet_list, users_first_house):
                         {
                             "name": "Moon", 
                             "reason": f'house lord is with {planet_name} whose is the owner of {house_no}',
-                            "level": "medium"
+                            "level": "medium",
+                            "conjunction": get_degree_difference(house_lord_degree, planet["normDegree"])
                         })
                     if bavam_karma_mapping[house_no]: karma_list.append(
                         {
                             "name": bavam_karma_mapping[house_no], 
                             "reason": f'house lord is with {planet_name} whose is the owner of {house_no}',
-                            "level": "medium"
+                            "level": "medium",
+                            "conjunction": get_degree_difference(house_lord_degree, planet["normDegree"])
                         })
-            if(planet_name == "Rahu" or planet_name == "Ketu"): karma_list.append(
+            if(planet_name != "Ascendant" and planet_karma_mapping[planet_name] and planet_name != house_lord): karma_list.append(
                 {
-                    "name": "Moon" if planet_name == "Rahu" else "Sun", 
+                    "name": planet_karma_mapping[planet_name], 
                     "reason": f'house lord is with {planet_name}',
-                    "level": "medium"
+                    "level": "low",
+                    "conjunction": get_degree_difference(house_lord_degree, planet["normDegree"])
                 })
     return karma_list
     
@@ -214,7 +220,7 @@ def get_planets_owning_house(planet_name, users_first_house, karma_list, planets
         {
             "name": "Moon" if planet_name == "Rahu" else "Sun", 
             "reason": f'{planet_name} is aspecting from {planets_position} house',
-            "level": "low"
+            "level": "very_low"
         })
     else :
         owning_houses = planet_owning_house[planet_name]
@@ -227,12 +233,18 @@ def get_planets_owning_house(planet_name, users_first_house, karma_list, planets
                 {
                     "name": "Moon", 
                     "reason": f'{planet_name} which is in the {planets_position} is the lord of {current_house} is aspecting {user_requested_house}',
-                    "level": "low"
+                    "level": "very_low"
                 })
             if bavam_karma_mapping[current_house]: karma_list.append(
             {
                 "name": bavam_karma_mapping[current_house], 
                 "reason": f'{planet_name} which is in the {planets_position} is the lord of {current_house} is aspecting {user_requested_house}',
-                "level": "low"
+                "level": "very_low"
             })
     return karma_list
+
+def get_degree_difference(house_lord_degree, planet_degree):
+    diff_btw_planets = abs(house_lord_degree - planet_degree)
+    if diff_btw_planets <= 5: return "high"
+    if diff_btw_planets <= 10: return "low"
+    return "negligible"

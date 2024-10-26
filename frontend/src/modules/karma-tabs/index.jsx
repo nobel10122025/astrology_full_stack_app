@@ -19,7 +19,8 @@ export const KarmaTabs = ({ karma_list }) => {
         if ("strong" == level) return "#A0D683"
         if ("medium" == level) return "#D3EE98"
         if ("low" == level) return "#FEFF9F"
-        else return "#F5F4B3"
+        if ("very_low" == level) return "#F5F4B3"
+        else return "#F3F3E0"
     }
 
     return (
@@ -37,10 +38,10 @@ export const KarmaTabs = ({ karma_list }) => {
                     {karma_list && karma_list.map((current_house, index) => {
                         const valuesToRender = current_house[`${index + 1}`]
                         return valuesToRender && valuesToRender.map((current_planet) => {
-                            const { level, name, reason } = current_planet
+                            const { level, name, reason, conjunction } = current_planet
                             return (
                                 <TabPanel value={index + 1} style={{ backgroundColor: getColorCode(level) }}>
-                                    <span >{name} Karma : </span> <span>{reason}</span>
+                                    <span >{name} Karma : </span> <span>{`${reason} ${conjunction ? "(" + conjunction + ")" : ''}`}</span>
                                 </TabPanel>
                             )
                         })

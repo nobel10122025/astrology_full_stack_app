@@ -3,5 +3,6 @@ export const header_list = [
     "Star",
     "Sign",
     "Degree",
+    "Star Lord",
     "Retrogated"
 ]
