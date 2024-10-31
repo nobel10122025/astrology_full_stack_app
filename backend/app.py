@@ -10,8 +10,8 @@ app = Flask(__name__)
 load_dotenv()
 CORS(app) 
 app.config['MONGODB_SETTINGS'] = {
-    'db': 'horoscope_service',
-    'host': 'mongodb+srv://nobel10122025:OLd7VRfphDVH7G7R@cluster0.xbfffcm.mongodb.net/horoscope_service?retryWrites=true&w=majority&ssl=true',
+    'db': os.getenv("DB_NAME"),
+    'host': os.getenv("DB_CONNECT"),
     'tls': True,
     'tlsInsecure': True
 }
