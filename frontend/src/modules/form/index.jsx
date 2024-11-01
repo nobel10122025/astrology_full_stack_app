@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Typography from '@mui/material/Typography';
-import { TextField, Box, Button } from '@mui/material';
+import { TextField, Box, Button, Autocomplete } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import Snackbar from '@mui/material/Snackbar';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { useStyles } from './style';
-import { generate_horoscope } from '../apis/apis';
+import { generate_horoscope, get_cities_list } from '../apis/apis';
 import { createPayload, payload_constants, chart_color_constants } from './utils';
 
 import { PlanetTable } from '../planet-table';
 import { KarmaTabs } from '../karma-tabs';
+let timeout = null;
 
 function FormPage() {
   const [data, setData] = useState(null)
@@ -23,7 +25,23 @@ function FormPage() {
   const [loading, setLoading] = useState(false)
   const [toasterOpen, setToasterOpen] = useState(false)
   const [generateChart, setGenerateChart] = useState(false)
+  const [city, setCity] = useState('')
+  const [cityList, setCityList] = useState([])
+  const [completeCities, setCompleteCities] = useState([])
   const classes = useStyles()
+  const currentYear = dayjs();
+
+  useEffect(() => {
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => get_cities_list({ "name": city }).then((res) => res.json()).then((data) => {
+      setCompleteCities(data)
+      const citiesName = data.reduce((acc, currentCity) => {
+        acc.push(currentCity.name)
+        return acc
+      }, [])
+      setCityList(citiesName)
+    }), 1500)
+  }, [city])
 
   const handleClose = () => {
     setToasterOpen(false);
@@ -61,12 +79,18 @@ function FormPage() {
               }}
               variant="outlined"
               onChange={(event) => setUserValues({ ...userValues, user_name: event.target.value })}
+              fullWidth={true}
             />
           </Box>
           <Box className={classes.fieldHolder} >
             <Typography className={classes.title}>Birth Date</Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker onChange={(value) => setUserValues({ ...userValues, date: value.format("DD-MM-YYYY") })} />
+              <DatePicker
+                onChange={(value) => setUserValues({ ...userValues, date: value.format("DD-MM-YYYY") })}
+                fullWidth={true}
+                sx={{ width: '100%' }}
+                views={['year', 'month', 'day']}
+              />
             </LocalizationProvider>
           </Box>
           <Box className={classes.fieldHolder} >
@@ -75,35 +99,35 @@ function FormPage() {
               <TimeField
                 format="HH:mm:ss"
                 onChange={(value) => setUserValues({ ...userValues, time: value.format("HH:mm:ss") })}
+                fullWidth={true}
               />
             </LocalizationProvider>
           </Box>
           <Box className={classes.fieldHolder}>
-            <Typography className={classes.title}>Lantitude</Typography>
-            <TextField
-              id="outlined-number"
-              type="number"
-              slotProps={{
-                inputLabel: {
-                  shrink: true,
-                },
+            <Typography className={classes.title}>City</Typography>
+            <Autocomplete
+              disablePortal
+              options={cityList}
+              value={city}
+              fullWidth={true}
+              onChange={(event, value) => {
+                const cityDetails = completeCities.length > 0 ? completeCities.find((currentCity) => currentCity.name == value) : null
+                if (cityDetails) {
+                  setUserValues({ ...userValues, "lat": cityDetails.lat, "long": cityDetails.long })
+                  setCity(value)
+                }
               }}
-              variant="outlined"
-              onChange={(event) => setUserValues({ ...userValues, lat: event.target.value })}
-            />
-          </Box>
-          <Box className={classes.fieldHolder} >
-            <Typography className={classes.title}>Longtitude</Typography>
-            <TextField
-              id="outlined-number"
-              type="number"
-              variant={"outlined"}
-              slotProps={{
-                inputLabel: {
-                  shrink: true,
-                },
-              }}
-              onChange={(event) => setUserValues({ ...userValues, long: event.target.value })}
+              renderInput={(params) => <TextField
+                {...params}
+                type='search'
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+                onChange={(event) => setCity(event.target.value)}
+                value={city}
+              />}
             />
           </Box>
           <FormControlLabel control={

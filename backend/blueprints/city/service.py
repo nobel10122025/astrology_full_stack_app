@@ -4,7 +4,7 @@ import logging
 def get_cities_list(query):
     cities = []
     try:
-        cities_list = Cities.objects(city__regex=f'(?i)^{query["name"]}')
+        cities_list = Cities.objects(city__regex=f'(?i)^{query}').limit(10)
         for current_city in cities_list:
             cities.append({
                 "name": current_city.city,

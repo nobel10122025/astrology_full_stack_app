@@ -5,6 +5,6 @@ cities_bp = Blueprint('city', __name__)
 
 @cities_bp.route('/cities', methods=['GET'])
 def get_cities():
-    query = request.get_json()
-    city_list = get_cities_list(query)
+    city_name = request.args.get('name')
+    city_list = get_cities_list(city_name)
     return jsonify(city_list), 200

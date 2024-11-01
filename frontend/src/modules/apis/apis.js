@@ -11,3 +11,16 @@ export const generate_horoscope = (payload) => {
             mode: 'cors',
         })
 }
+
+export const get_cities_list = (query) => {
+    const search = new URLSearchParams(query);
+    return fetch(`${backend_endpoint}/cities?${search.toString()}`, 
+        {
+            method: "GET", 
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+            mode: 'cors',
+        })
+}
