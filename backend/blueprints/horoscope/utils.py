@@ -65,6 +65,19 @@ def get_house_lord_saram_karma(house_lord, planet_list, users_first_house):
             owning_houses = planet_owning_house[star_owner]
             bavan_house_list = []
             karma_list = []
+            if star_owner == "Ketu" or star_owner == "Rahu":
+                if star_owner == "Ketu":
+                    karma_list.append({
+                        "name": "Sun", 
+                        "reason": f'{house_lord} is on the saram of Ketu',
+                        "level": "strong"
+                        })
+                else:
+                    karma_list.append({
+                        "name": "Moon", 
+                        "reason": f'{house_lord} is on the saram of Rahu',
+                        "level": "strong"
+                        })
             for houses_no in owning_houses:
                 user_house_count = get_planets_current_house(houses_no, users_first_house)
                 bavan_house_list.append(user_house_count)
@@ -203,7 +216,7 @@ def get_aspecting_planet_karma(_, planet_list, users_first_house, user_requested
     karma_list = []
     aspecting_houses = get_aspecting_houses(user_requested_house)
     for planet in planet_list:
-        if planet["name"] != "Ascendant":
+        if planet["name"] != "Ascendant" and planet["name"] != "Ketu" and planet["name"] != "Rahu":
             planets_position = get_planets_current_house(planet["current_sign"], users_first_house)
             if ((aspecting_houses[0] == planets_position or aspecting_houses[6] == planets_position) and planet["name"] == "Saturn"):
                 get_planets_owning_house(planet["name"], users_first_house, karma_list, planets_position, user_requested_house)
