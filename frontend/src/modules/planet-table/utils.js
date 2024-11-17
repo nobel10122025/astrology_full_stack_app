@@ -4,5 +4,6 @@ export const header_list = [
     "Sign",
     "Degree",
     "Star Lord",
+    "Strength",
     "Retrogated"
 ]

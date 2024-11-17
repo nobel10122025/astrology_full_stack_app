@@ -1,4 +1,4 @@
-from .constants import first_type, second_type, third_type, fourth_type, house_star_mapping, karmas, karma_star_mapping, star_owner_mapping, planet_owning_house, planet_karma_mapping, bavam_karma_mapping, house_karma_lords, aspecting_houses
+from .constants import first_type, second_type, third_type, fourth_type, house_star_mapping, karmas, karma_star_mapping, star_owner_mapping, planet_owning_house, planet_karma_mapping, bavam_karma_mapping, house_karma_lords, aspecting_houses, planet_status
 
 def get_star_position(degree):
     if degree > 0 and degree < 03.2: return 1
@@ -260,4 +260,14 @@ def get_degree_difference(house_lord_degree, planet_degree):
     diff_btw_planets = abs(house_lord_degree - planet_degree)
     if diff_btw_planets <= 5: return "high"
     if diff_btw_planets <= 10: return "low"
-    return "negligible"
+    if diff_btw_planets <= 20: return "negligible"
+    return "very negligible"
+
+def get_planet_status(planet_name, sign_no):
+    postition_list = planet_status[planet_name]
+    if sign_no in postition_list:
+        index = postition_list.index(sign_no)
+        if index == 0: return "Exalted"
+        if index == 1: return "Debilitated"
+        if index == 2 or index ==3: return "Own house"
+    else: return "-"

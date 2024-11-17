@@ -28,7 +28,7 @@ export const PlanetTable = ({ planets_data }) => {
                         </TableHead>
                         <TableBody>
                             {planets_data && planets_data.length > 0 && planets_data.map((currentPlanet) => {
-                                const { name, rasi, star, normDegree, isRetro, star_lord } = currentPlanet
+                                const { name, rasi, star, normDegree, isRetro, star_lord, status } = currentPlanet
                                 return (
                                     <TableRow
                                         key={name}
@@ -40,6 +40,7 @@ export const PlanetTable = ({ planets_data }) => {
                                         <TableCell align="center">{rasi}</TableCell>
                                         <TableCell align="center">{normDegree}</TableCell>
                                         <TableCell align="center">{star_lord}</TableCell>
+                                        <TableCell align="center">{status}</TableCell>
                                         <TableCell align="center">{isRetro}</TableCell>
                                     </TableRow>
                                 )

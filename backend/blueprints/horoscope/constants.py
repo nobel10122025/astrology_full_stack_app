@@ -156,3 +156,17 @@ house_karma_lords = {
 }
 
 aspecting_houses = [2,3,4,6,7,8,9]
+
+planet_status = {
+    # planet_name: ["Exalted", "Debilitated", "Own houses", "Own houses"]
+    "Sun": [1, 7, 5],
+    "Moon": [2, 8, 4],
+    "Mercury": [6, 12, 3],
+    "Venus": [12, 6, 2, 7],
+    "Jupiter": [4, 10, 9, 12],
+    "Saturn": [7, 1, 10, 11],
+    "Mars": [10, 4, 1, 8],
+    "Rahu": [],
+    "Ketu": [],
+    "Ascendant": []
+}

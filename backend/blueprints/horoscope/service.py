@@ -1,5 +1,5 @@
 from others.astrology import AstrologyService
-from .utils import find_star, get_first_house, get_house_lord_star_karma, get_house_lord_saram_karma, get_house_lord_bavam_karma, get_planets_karma, get_planets_houses_karma, get_house_lord_conjuction_karma, get_user_house_karma, get_aspecting_planet_karma
+from .utils import find_star, get_first_house, get_house_lord_star_karma, get_house_lord_saram_karma, get_house_lord_bavam_karma, get_planets_karma, get_planets_houses_karma, get_house_lord_conjuction_karma, get_user_house_karma, get_aspecting_planet_karma, get_planet_status
 from .constants import planets, house_name, house_name_lords, star_owner_mapping
 
 
@@ -12,6 +12,7 @@ def format_stars_planet(planet_position):
         updated_object["rasi"] = house_name[planet_position[i].get("current_sign")]
         updated_object["name"] = i
         updated_object["star_lord"] = star_owner_mapping[star_name]
+        updated_object["status"] = get_planet_status(i, planet_position[i].get("current_sign"))
         updated_list.append(updated_object)
     return updated_list
 
