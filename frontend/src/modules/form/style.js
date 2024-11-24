@@ -8,10 +8,10 @@ export const useStyles = makeStyles({
     height: '95vh',
     width: '100%',
     backgroundBlendMode: 'lighten',
-    backgroundColor: '#CCCCFF',
+    backgroundColor: '#D2E0FB',
   },
   title: {
-    color: '#4B0082',
+    color: '#C62E2E',
     fontWeight: `${600} !important`,
     marginRight: '14px !important',
     width: '30%'
