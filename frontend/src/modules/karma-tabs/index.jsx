@@ -6,8 +6,12 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { tab_names } from './utils';
 import Typography from '@mui/material/Typography'
+import { TextField } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 
-export const KarmaTabs = ({ karma_list }) => {
+export const KarmaTabs = ({ karma_list, setUserValues, userValues, generateHoroscope }) => {
     const [value, setValue] = useState(1);
 
     const handleChange = (event, newValue) => {
@@ -26,6 +30,30 @@ export const KarmaTabs = ({ karma_list }) => {
     return (
         <>
             <Typography variant="h6" align="center">House's Karma</Typography>
+            <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                <Typography mr={2}>Shift the lagna</Typography>
+                <TextField
+                    id="outlined-number"
+                    // label="Lagna"
+                    type="number"
+                    slotProps={{
+                        inputLabel: {
+                            shrink: true,
+                        },
+                    }}
+                    onChange={(event) => setUserValues({...userValues, updated_house: event.target.value})}
+                    value={userValues['updated_house']}
+                    variant="standard"
+                    endAdornment={<InputAdornment position="end">
+                    </InputAdornment>}
+                />
+                <IconButton
+                    edge="end"
+                    onClick={() => generateHoroscope()}
+                >
+                    <SearchIcon />
+                </IconButton>
+            </Box>
             <Box sx={{ width: '70%', typography: 'body1', margin: '0px auto' }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

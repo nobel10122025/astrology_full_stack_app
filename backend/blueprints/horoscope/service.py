@@ -16,9 +16,12 @@ def format_stars_planet(planet_position):
         updated_list.append(updated_object)
     return updated_list
 
-def get_house_karma(planet_list, house_count):
+def get_house_karma(planet_list, house_count, updated_house=None):
     karma_list = []
-    user_first_house = get_first_house(planet_list)
+    user_first_house = 0
+    if updated_house is None:
+        user_first_house = get_first_house(planet_list)
+    else: user_first_house = int(updated_house)
     if user_first_house + house_count >= 14: required_house_name = house_name[(user_first_house + house_count) - 13]
     else: required_house_name = house_name[(user_first_house + house_count)-1]
     house_lord = house_name_lords[required_house_name]
@@ -32,7 +35,7 @@ def get_house_karma(planet_list, house_count):
     karma_list = karma_list + get_planets_karma(house_lord, planet_list, user_first_house, house_count)
     return karma_list
 
-def generate_horoscope_from_api(birth_details):
+def generate_horoscope_from_api(birth_details, updated_house):
     chart_generated = None
     astrology_data = AstrologyService()
     response_generated = astrology_data.generate_horoscope(birth_details)
@@ -42,7 +45,7 @@ def generate_horoscope_from_api(birth_details):
         updated_planet_list = format_stars_planet(required_list[1])
         karma_list = []
         for i in range(1,13): 
-            house_karma_list = get_house_karma(updated_planet_list, i)
+            house_karma_list = get_house_karma(updated_planet_list, i, updated_house)
             if (i == 1): house_karma_list.insert(1,get_house_lord_star_karma("Ascendant", updated_planet_list))
             karma_list.append({ i: house_karma_list })
     if (chart_generated): return {"planet_position" : updated_planet_list, "karma_list": karma_list, "chart": chart_generated["output"]}

@@ -20,7 +20,7 @@ let timeout = null;
 
 function FormPage({ setToasterOpen }) {
   const [data, setData] = useState(null)
-  const [userValues, setUserValues] = useState({ date: '', long: '', lat: '', time: '', user_name: '' })
+  const [userValues, setUserValues] = useState({ date: '', long: '', lat: '', time: '', user_name: '', updated_house: null })
   const [loading, setLoading] = useState(false)
   const [generateChart, setGenerateChart] = useState(false)
   const [city, setCity] = useState('')
@@ -28,6 +28,8 @@ function FormPage({ setToasterOpen }) {
   const [completeCities, setCompleteCities] = useState([])
   const classes = useStyles()
   const currentYear = dayjs();
+
+  console.log("userValues userValues", userValues)
 
   useEffect(() => {
     if (timeout) clearTimeout(timeout)
@@ -46,7 +48,7 @@ function FormPage({ setToasterOpen }) {
     const chart_constants = generateChart ? chart_color_constants : {}
     if (chart_constants && Object.keys(chart_constants).length > 0) chart_constants["chart_config"]["native_name"] = userValues["user_name"]
     setLoading(true)
-    generate_horoscope({ ...formattedPayload, ...payload_constants, ...chart_constants, generate_chart: generateChart }).then((res) => res.json()).then((data) => {
+    generate_horoscope({ ...formattedPayload, ...payload_constants, ...chart_constants, generate_chart: generateChart, updated_house: userValues["updated_house"] }).then((res) => res.json()).then((data) => {
       setData(data)
       setLoading(false)
     }).catch((err) => {
@@ -148,7 +150,7 @@ function FormPage({ setToasterOpen }) {
         </Box>}
       </Box>
       {data && <PlanetTable planets_data={data.planet_position} />}
-      {data && <KarmaTabs karma_list={data.karma_list} />}
+      {data && <KarmaTabs karma_list={data.karma_list} setUserValues={setUserValues} userValues={userValues} generateHoroscope={generateHoroscope} />}
     </>
   )
 }
