@@ -11,7 +11,7 @@ import { useStyles } from './style';
 import { LoginProps, SignUpProps } from './utils';
 import cookie from '../../utils/cookie.js'
 
-export default function LoginPage({ isModalOpen, setIsModalOpen, setIsLoggedIn }) {
+export default function LoginPage({ isModalOpen, setIsModalOpen, setIsLoggedIn, setToasterOpen }) {
   const [isSignUp, setIsSignUp] = useState(false)
   const [userValues, setUserValues] = useState({ username: "", password: "" })
   const [renderData, setRenderData] = useState(false)
@@ -27,10 +27,12 @@ export default function LoginPage({ isModalOpen, setIsModalOpen, setIsLoggedIn }
 
   const logUserIn = () => {
     get_auth_token(userValues).then((res) => res.json()).then((data) => {
-      console.log("data data", data)        
-      cookie.setCookie("authToken", data.access_token)
-      setIsLoggedIn(true)
-      setIsModalOpen(false)
+      if (data.access_token) {
+        cookie.setCookie("authToken", data.access_token)
+        setIsLoggedIn(true)
+        setIsModalOpen(false)
+      } else setToasterOpen({ open: true, msg: data.msg })
+      setUserValues({})
     })
   }
 
@@ -44,8 +46,8 @@ export default function LoginPage({ isModalOpen, setIsModalOpen, setIsLoggedIn }
   }
 
   const resetModal = () => {
-   setIsSignUp(!isSignUp)
-   setUserValues('')
+    setIsSignUp(!isSignUp)
+    setUserValues({})
   }
 
   return (

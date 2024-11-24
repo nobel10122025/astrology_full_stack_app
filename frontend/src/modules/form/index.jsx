@@ -8,7 +8,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Typography from '@mui/material/Typography';
 import { TextField, Box, Button, Autocomplete } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
-import Snackbar from '@mui/material/Snackbar';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import { useStyles } from './style';
@@ -19,11 +18,10 @@ import { PlanetTable } from '../planet-table';
 import { KarmaTabs } from '../karma-tabs';
 let timeout = null;
 
-function FormPage() {
+function FormPage({ setToasterOpen }) {
   const [data, setData] = useState(null)
   const [userValues, setUserValues] = useState({ date: '', long: '', lat: '', time: '', user_name: '' })
   const [loading, setLoading] = useState(false)
-  const [toasterOpen, setToasterOpen] = useState(false)
   const [generateChart, setGenerateChart] = useState(false)
   const [city, setCity] = useState('')
   const [cityList, setCityList] = useState([])
@@ -43,10 +41,6 @@ function FormPage() {
     }), 1500)
   }, [city])
 
-  const handleClose = () => {
-    setToasterOpen(false);
-  };
-
   const generateHoroscope = () => {
     const formattedPayload = createPayload(userValues)
     const chart_constants = generateChart ? chart_color_constants : {}
@@ -58,7 +52,7 @@ function FormPage() {
     }).catch((err) => {
       console.log("err", err)
       setLoading(false)
-      setToasterOpen(true)
+      setToasterOpen({ msg: 'Some error occured', open: true })
     })
   }
 
@@ -155,12 +149,6 @@ function FormPage() {
       </Box>
       {data && <PlanetTable planets_data={data.planet_position} />}
       {data && <KarmaTabs karma_list={data.karma_list} />}
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        open={toasterOpen}
-        onClose={handleClose}
-        message={"Opps! Some error occured."}
-      />
     </>
   )
 }
