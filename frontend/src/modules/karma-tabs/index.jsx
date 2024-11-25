@@ -4,12 +4,12 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { tab_names } from './utils';
+import { tab_names, rasi_list } from './utils';
 import Typography from '@mui/material/Typography'
-import { TextField } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-import InputAdornment from '@mui/material/InputAdornment';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 export const KarmaTabs = ({ karma_list, setUserValues, userValues, generateHoroscope }) => {
     const [value, setValue] = useState(1);
@@ -32,26 +32,36 @@ export const KarmaTabs = ({ karma_list, setUserValues, userValues, generateHoros
             <Typography variant="h6" align="center">House's Karma</Typography>
             <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
                 <Typography mr={2}>Shift the lagna</Typography>
-                <TextField
-                    id="outlined-number"
-                    // label="Lagna"
-                    type="number"
-                    slotProps={{
-                        inputLabel: {
-                            shrink: true,
-                        },
-                    }}
-                    onChange={(event) => setUserValues({...userValues, updated_house: event.target.value})}
-                    value={userValues['updated_house']}
-                    variant="standard"
-                    endAdornment={<InputAdornment position="end">
-                    </InputAdornment>}
+                <Autocomplete 
+                    options={rasi_list}
+                    getOptionLabel={(option) => option}
+                    renderInput={(params) => (
+                        <TextField
+                            id="outlined-number"
+                            variant="standard"
+                            {...params}
+                            />
+                        )}
+                        onInputChange={(event, value) => {
+                            setUserValues({ ...userValues, updated_house: (rasi_list.indexOf(value)+1) })
+                        }
+                        }
+                        value={userValues['updated_house'] ? rasi_list[userValues['updated_house']-1] : "-"}
                 />
                 <IconButton
                     edge="end"
                     onClick={() => generateHoroscope()}
                 >
                     <SearchIcon />
+                </IconButton>
+                <IconButton
+                    edge="end"
+                    onClick={() => {
+                        setUserValues({ ...userValues, updated_house: null })
+                        generateHoroscope(true)
+                    }}
+                >
+                    <RestartAltIcon />
                 </IconButton>
             </Box>
             <Box sx={{ width: '70%', typography: 'body1', margin: '0px auto' }}>

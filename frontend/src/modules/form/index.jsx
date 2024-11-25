@@ -9,10 +9,13 @@ import Typography from '@mui/material/Typography';
 import { TextField, Box, Button, Autocomplete } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { useStyles } from './style';
 import { generate_horoscope, get_cities_list } from '../apis/apis';
 import { createPayload, payload_constants, chart_color_constants } from './utils';
+
 
 import { PlanetTable } from '../planet-table';
 import { KarmaTabs } from '../karma-tabs';
@@ -43,12 +46,12 @@ function FormPage({ setToasterOpen }) {
     }), 1500)
   }, [city])
 
-  const generateHoroscope = () => {
+  const generateHoroscope = (reset=false) => {
     const formattedPayload = createPayload(userValues)
     const chart_constants = generateChart ? chart_color_constants : {}
     if (chart_constants && Object.keys(chart_constants).length > 0) chart_constants["chart_config"]["native_name"] = userValues["user_name"]
     setLoading(true)
-    generate_horoscope({ ...formattedPayload, ...payload_constants, ...chart_constants, generate_chart: generateChart, updated_house: userValues["updated_house"] }).then((res) => res.json()).then((data) => {
+    generate_horoscope({ ...formattedPayload, ...payload_constants, ...chart_constants, generate_chart: generateChart, updated_house: userValues["updated_house"] == 0 || reset ? null : userValues["updated_house"] }).then((res) => res.json()).then((data) => {
       setData(data)
       setLoading(false)
     }).catch((err) => {
@@ -151,6 +154,12 @@ function FormPage({ setToasterOpen }) {
       </Box>
       {data && <PlanetTable planets_data={data.planet_position} />}
       {data && <KarmaTabs karma_list={data.karma_list} setUserValues={setUserValues} userValues={userValues} generateHoroscope={generateHoroscope} />}
+      <Backdrop
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   )
 }
