@@ -46,7 +46,7 @@ function FormPage({ setToasterOpen }) {
     }), 1500)
   }, [city])
 
-  const generateHoroscope = (reset=false) => {
+  const generateHoroscope = (reset = false) => {
     const formattedPayload = createPayload(userValues)
     const chart_constants = generateChart ? chart_color_constants : {}
     if (chart_constants && Object.keys(chart_constants).length > 0) chart_constants["chart_config"]["native_name"] = userValues["user_name"]
@@ -150,6 +150,10 @@ function FormPage({ setToasterOpen }) {
         {data && data.chart && <Box>
           <Typography variant='h6'>Your Birth Chart</Typography>
           <img src={data.chart} />
+        </Box>}
+        {data && data.navamsa_chart && <Box>
+          <Typography variant='h6'>Your navamsa Chart</Typography>
+          <img src={data.navamsa_chart} />
         </Box>}
       </Box>
       {data && <PlanetTable planets_data={data.planet_position} />}

@@ -23,3 +23,9 @@ class AstrologyService:
         if response.status_code == 200:
                 return response.json()
         return False
+    
+    def generate_navamsa_chart(self, payload):
+        response = requests.request("POST", url="https://json.freeastrologyapi.com/navamsa-chart-url", headers=self.headers, data=json.dumps(payload))
+        if response.status_code == 200:
+                return response.json()
+        return False

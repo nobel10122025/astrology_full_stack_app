@@ -38,7 +38,7 @@ export const PlanetTable = ({ planets_data }) => {
                                         </TableCell>
                                         <TableCell align="center">{star}</TableCell>
                                         <TableCell align="center">{rasi}</TableCell>
-                                        <TableCell align="center">{normDegree}</TableCell>
+                                        <TableCell align="center">{Number(normDegree).toFixed(2)}</TableCell>
                                         <TableCell align="center">{star_lord}</TableCell>
                                         <TableCell align="center">{status}</TableCell>
                                         <TableCell align="center">{isRetro}</TableCell>

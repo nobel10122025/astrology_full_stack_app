@@ -37,9 +37,11 @@ def get_house_karma(planet_list, house_count, updated_house=None):
 
 def generate_horoscope_from_api(birth_details, updated_house):
     chart_generated = None
+    navamsa_generated = None
     astrology_data = AstrologyService()
     response_generated = astrology_data.generate_horoscope(birth_details)
     if (birth_details["generate_chart"]): chart_generated = astrology_data.generate_horoscope_chart(birth_details)
+    if (birth_details["generate_chart"]): navamsa_generated = astrology_data.generate_navamsa_chart(birth_details)
     if response_generated:
         required_list = response_generated.get("output")
         updated_planet_list = format_stars_planet(required_list[1])
@@ -48,6 +50,6 @@ def generate_horoscope_from_api(birth_details, updated_house):
             house_karma_list = get_house_karma(updated_planet_list, i, updated_house)
             if (i == 1): house_karma_list.insert(1,get_house_lord_star_karma("Ascendant", updated_planet_list))
             karma_list.append({ i: house_karma_list })
-    if (chart_generated): return {"planet_position" : updated_planet_list, "karma_list": karma_list, "chart": chart_generated["output"]}
-    return {"planet_position" : updated_planet_list, "karma_list": karma_list, "chart": ""}
+    if (chart_generated): return {"planet_position" : updated_planet_list, "karma_list": karma_list, "chart": chart_generated["output"], "navamsa_chart" :navamsa_generated["output"]}
+    return {"planet_position" : updated_planet_list, "karma_list": karma_list, "chart": "", "navamsa_chart" :""}
     
